@@ -1,0 +1,81 @@
+name: Teams Action
+description: A GitHub Action that runs a Docker container with specified inputs
+
+inputs:
+  steps_json:
+    description: 'Steps to pass to Docker container'
+    required: true
+  teams_Webhook_Url:
+    description: 'TEAMS_WEBHOOK_URL'
+    required: true
+  job_Status:
+    description: 'Job Status'
+    default: '${{ job.status }}'
+  github_Actor:
+    description: 'GitHub Actor'
+    default: '${{ github.actor }}'
+  github_Event_Name:
+    description: 'GitHub Event Name'
+    default: '${{ github.event_name }}'
+  github_Event_Head_Commit_Url:
+    description: 'GitHub Event Head Commit URL'
+    default: '${{ github.event.head_commit.url }}'
+  github_Event_Head_Commit_Message:
+    description: 'GitHub Event Head Commit Message'
+    default: '${{ github.event.head_commit.message }}'
+  github_Server_Url:
+    description: 'GitHub Server URL'
+    default: '${{ github.server_url }}'
+  github_Repository:
+    description: 'GitHub Repository'
+    default: '${{ github.repository }}'
+  github_pull_Request_Number:
+    description: 'GitHub Pull Request Number'
+    default: '${{ github.event.pull_request.number }}'
+  github_branch_Ref:
+    description: 'GitHub Branch Details'
+    default: '${{ github.head_ref || github.ref_name }}'
+  github_Run_Id:
+    description: 'GitHub Run ID'
+    default: '${{ github.run_id }}'
+  sonar_Host_Url:
+    description: 'Sonar Host URL'  
+    default: ''
+  sonar_Project_Key:
+    description: 'Sonar Project Key'
+    default: ''
+  blackDuck_Server_Url:
+    description: 'Black Duck Server URL'  
+    default: ''
+  blackDuck_ProjId:
+    description: 'Black Duck Project ID' 
+    default: '' 
+  blackDuck_VersionId:
+    description: 'Black Duck Version ID'
+    default: ''
+  unit_test_url:
+    description: 'generated Unit Test url from from honeycomb CICD pipeline'
+    default: ''
+    
+runs:
+  using: 'docker'
+  image: docker://cicd-oci-release-orl.repo.orl.eng.hitachivantara.com/hv-actions/teams-notify-action:teams-notify
+  env:
+    STEPS_JSON: ${{ inputs.steps_json }}
+    TEAMS_WEBHOOK_URL: ${{ inputs.teams_Webhook_Url }}
+    JOB_STATUS: ${{ inputs.job_Status }}
+    GITHUB_ACTOR: ${{ inputs.github_Actor }}
+    GITHUB_EVENT_NAME: ${{ inputs.github_Event_Name }}
+    GITHUB_EVENT_HEAD_COMMIT_URL: ${{ inputs.github_Event_Head_Commit_Url }}
+    GITHUB_EVENT_HEAD_COMMIT_MESSAGE: ${{ inputs.github_Event_Head_Commit_Message }}
+    GITHUB_SERVER_URL: ${{ inputs.github_Server_Url }}
+    GITHUB_REPOSITORY: ${{ inputs.github_Repository }}
+    GITHUB_PULL_REQUEST_NUMBER: ${{ inputs.github_pull_Request_Number }}
+    GITHUB_BRANCH_REF: ${{ inputs.github_branch_Ref }}
+    GITHUB_RUN_ID: ${{ inputs.github_Run_Id }}
+    SONAR_HOST_URL: ${{ inputs.sonar_Host_Url }}
+    SONAR_PROJECT_KEY: ${{ inputs.sonar_Project_Key }}
+    BLACKDUCK_SERVER_URL: ${{ inputs.blackDuck_Server_Url }}
+    BLACKDUCK_PROJ_ID: ${{ inputs.blackDuck_ProjId }}
+    BLACKDUCK_VERSION_ID: ${{ inputs.blackDuck_VersionId }}
+    UNIT_TEST_URL: ${{ inputs.unit_test_url }}
