@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM docker.repo.orl.eng.hitachivantara.com/python:3.8-slim
+FROM one.hitachivantara.com/docker/python:3.8-slim
 
 # Install the required Python packages using pip
 RUN pip install pyyaml requests Pillow
@@ -40,4 +40,3 @@ CMD ["python", "/index.py", \
     "$SONAR_HOST_URL", "$SONAR_PROJECT_KEY", \
     "$BLACKDUCK_SERVER_URL", "$BLACKDUCK_PROJ_ID", \
     "$BLACKDUCK_VERSION_ID", "$UNIT_TEST_URL"]
-
