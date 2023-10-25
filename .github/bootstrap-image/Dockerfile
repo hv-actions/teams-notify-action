@@ -40,3 +40,4 @@ CMD ["python", "/index.py", \
     "$SONAR_HOST_URL", "$SONAR_PROJECT_KEY", \
     "$BLACKDUCK_SERVER_URL", "$BLACKDUCK_PROJ_ID", \
     "$BLACKDUCK_VERSION_ID", "$UNIT_TEST_URL"]
+
