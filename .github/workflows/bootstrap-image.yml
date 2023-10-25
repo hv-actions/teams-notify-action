@@ -2,7 +2,7 @@ name: Build and Push Container Image for Teams Notify
 
 on:
   push:
-    paths: [ .github/bootstrap-images/* ]
+    paths: [ .github/bootstrap-images/** ]
 
 jobs:
   bootstrap-image:
