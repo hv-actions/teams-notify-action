@@ -67,3 +67,5 @@ runs:
     SONAR_HOST_URL: ${{ inputs.sonar_Host_Url }}
     SONAR_PROJECT_KEY: ${{ inputs.sonar_Project_Key }}
     UNIT_TEST_URL: ${{ inputs.unit_test_url }}
+    DOCKER_USERNAME: ${{ secrets.JFROG_JARJAR_SERVICE_USERNAME }}
+    DOCKER_PASSWORD: ${{ secrets.JFROG_JARJAR_SERVICE_TOKEN }}
