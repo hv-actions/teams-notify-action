@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM docker.repo.orl.eng.hitachivantara.com/python:3.8-slim
+FROM one.hitachivantara.com/docker/python:3.8-slim
 
 # Install the required Python packages using pip
 RUN pip install pyyaml requests Pillow
@@ -24,9 +24,6 @@ ENV GITHUB_BRANCH_REF=$GITHUB_BRANCH_REF
 ENV GITHUB_RUN_ID=$GITHUB_RUN_ID
 ENV SONAR_HOST_URL=$SONAR_HOST_URL
 ENV SONAR_PROJECT_KEY=$SONAR_PROJECT_KEY
-ENV BLACKDUCK_SERVER_URL=$BLACKDUCK_SERVER_URL
-ENV BLACKDUCK_PROJ_ID=$BLACKDUCK_PROJ_ID
-ENV BLACKDUCK_VERSION_ID=$BLACKDUCK_VERSION_ID
 ENV UNIT_TEST_URL=$UNIT_TEST_URL
 
 CMD ["python", "/index.py", \
@@ -38,5 +35,4 @@ CMD ["python", "/index.py", \
     "$GITHUB_REPOSITORY", "$GITHUB_PULL_REQUEST_NUMBER", \
     "$GITHUB_BRANCH_REF", "$GITHUB_RUN_ID", \
     "$SONAR_HOST_URL", "$SONAR_PROJECT_KEY", \
-    "$BLACKDUCK_SERVER_URL", "$BLACKDUCK_PROJ_ID", \
-    "$BLACKDUCK_VERSION_ID", "$UNIT_TEST_URL"]
+    "$UNIT_TEST_URL"]

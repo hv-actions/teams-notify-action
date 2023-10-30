@@ -1,34 +1,24 @@
-name: Build and Push teams Container Image
+name: Build and Push Container Image for Teams Notify
+
 on:
-  create:
   push:
     paths: [ .github/bootstrap-image/** ]
-env:
-  ARTIFACTORY: cicd-oci-release-orl.repo.orl.eng.hitachivantara.com
-  IMAGE: ${{ github.repository_owner }}/${{ github.event.repository.name }}:teams-notify
+
 jobs:
   bootstrap-image:
-    name: CI Image [${{ github.repository_owner }}/${{ github.event.repository.name }}:${{ github.ref_name }}]
-    runs-on: [ self-hosted, Linux, k8s ]
+    name: Bootstrap Image for Teams Notify
+    runs-on: [ k8s ]
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Build
-        id: build-image
-        run: docker build -t "${{ env.ARTIFACTORY }}/${{ env.IMAGE }}" -f .github/bootstrap-image/Dockerfile .
-
-      - name: Push to Artifactory
-        id: push-to-artifactory
-        run: |
-          docker login ${{ env.ARTIFACTORY }} -u ${{ secrets.CICD_ARTIFACTORY_USERNAME }} -p ${{ secrets.CICD_ARTIFACTORY_TOKEN }}
-          docker push "${{ env.ARTIFACTORY }}/${{ env.IMAGE }}"
-      - name: Summary
-        run: |
-          echo "Image built:"\ >> $GITHUB_STEP_SUMMARY
-          echo "<pre>" >> $GITHUB_STEP_SUMMARY
-          docker images >> $GITHUB_STEP_SUMMARY
-          echo "</pre>"\ >> $GITHUB_STEP_SUMMARY
-          
-          echo "Image pushed: '${{ env.ARTIFACTORY }}/${{ env.IMAGE }}'" >> $GITHUB_STEP_SUMMARY
+      - name: Build and publish
+        uses: hv-actions/bootstrap-image-action@1.1.0
+        with:
+          ARTIFACTORY: one.hitachivantara.com
+          ARTIFACTORY_USER: ${{ secrets.JFROG_JARJAR_SERVICE_USERNAME }}
+          ARTIFACTORY_KEY: ${{ secrets.JFROG_JARJAR_SERVICE_TOKEN }}
+          DOCKERFILE_PATH: .github/bootstrap-image/Dockerfile
+          IMAGE_PREFIX: teams
+          TAG_SUFFIX: teams
+          IMAGE_NAME: devops-docker-release/honeycomb-notify

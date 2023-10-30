@@ -44,15 +44,6 @@ inputs:
   sonar_Project_Key:
     description: 'Sonar Project Key'
     default: ''
-  blackDuck_Server_Url:
-    description: 'Black Duck Server URL'  
-    default: ''
-  blackDuck_ProjId:
-    description: 'Black Duck Project ID' 
-    default: '' 
-  blackDuck_VersionId:
-    description: 'Black Duck Version ID'
-    default: ''
   unit_test_url:
     description: 'generated Unit Test url from from honeycomb CICD pipeline'
     default: ''
@@ -75,7 +66,4 @@ runs:
     GITHUB_RUN_ID: ${{ inputs.github_Run_Id }}
     SONAR_HOST_URL: ${{ inputs.sonar_Host_Url }}
     SONAR_PROJECT_KEY: ${{ inputs.sonar_Project_Key }}
-    BLACKDUCK_SERVER_URL: ${{ inputs.blackDuck_Server_Url }}
-    BLACKDUCK_PROJ_ID: ${{ inputs.blackDuck_ProjId }}
-    BLACKDUCK_VERSION_ID: ${{ inputs.blackDuck_VersionId }}
     UNIT_TEST_URL: ${{ inputs.unit_test_url }}

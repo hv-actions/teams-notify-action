@@ -17,7 +17,7 @@ job_status_input = os.environ.get('JOB_STATUS')
 
 #Create message footer
 github_event_actor = os.environ.get('GITHUB_ACTOR')
-event_actor_icon_url = f"https://github.com/{github_event_actor}.png?size=20"
+event_actor_icon_url = f"https://github.com/{github_event_actor}.png"
 response = requests.get(event_actor_icon_url, allow_redirects=True)
 # Get the final redirected URL (the URL after all redirects)
 github_user_icon = response.url
@@ -40,12 +40,6 @@ github_run_id = os.environ.get('GITHUB_RUN_ID')
 #sonar login details
 sonar_host_url = os.environ.get('SONAR_HOST_URL')
 sonar_project_key = os.environ.get('SONAR_PROJECT_KEY')
-# ---
-
-#Blackduck details
-blackduck_server_url = os.environ.get('BLACKDUCK_SERVER_URL')
-blackduck_proj_id = os.environ.get('BLACKDUCK_PROJ_ID')
-blackduck_version_id = os.environ.get('BLACKDUCK_VERSION_ID')
 # ---
 
 #Set Workflow details Url
@@ -88,9 +82,9 @@ def step_track(steps_input):
         
     # Define desired sequence based on event type
     if github_event_name != "pull_request" and github_event_name != "pull_request_target":
-        if 'Blackduck' not in steps_input:
-            steps_input['Blackduck'] = {'outputs': {}, 'outcome': 'skipped', 'conclusion': 'skipped'}
-        desired_sequence = ['Build', 'Unit_Test', 'Sonarqube', 'Blackduck']
+        if 'Citadel' not in steps_input:
+            steps_input['Citadel'] = {'outputs': {}, 'outcome': 'skipped', 'conclusion': 'skipped'}
+        desired_sequence = ['Build', 'Unit_Test', 'Sonarqube', 'Citadel']
     else:
         desired_sequence = ['Build', 'Unit_Test', 'Sonarqube']
 
@@ -113,15 +107,6 @@ if sonar_host_url and sonar_project_key:
 else:
     generate_sonarqube_url = ""
 
-# Blackduck url generation
-if github_event_name != "pull_request" and github_event_name != "pull_request_target":
-    if blackduck_server_url != "":
-        genereted_blackduck_url = f"{blackduck_server_url}/api/projects/{blackduck_proj_id}/versions/{blackduck_version_id}/components"
-    else:
-        genereted_blackduck_url = ""
-else:
-    genereted_blackduck_url = ""
-
 # Unit Test Url link from honeycomb
 generated_unit_test_url = os.environ.get('UNIT_TEST_URL')
 
@@ -132,8 +117,6 @@ def replace_values_with_links(data,sonarqube_url,unit_test_url,blackduck_url):
             item['value'] = f'<a href="{unit_test_url}">{item["value"]}</a>'
         elif item['name'] == 'Sonarqube' and item['value'] != '❌ SKIP' and sonarqube_url:
             item['value'] = f'<a href="{sonarqube_url}">{item["value"]}</a>'
-        elif item['name'] == 'Blackduck' and item['value'] != '❌ SKIP' and blackduck_url:
-            item['value'] = f'<a href="{blackduck_url}">{item["value"]}</a>'
     return data
 
 #Creating teams message Structure using json_payload
@@ -181,13 +164,13 @@ else:
         json_payload["sections"].append({"text": "<h2><strong>Workflow Steps</strong></h2>"})
         
         #Updating fact_list with link
-        final_fact_list = replace_values_with_links(fact_list,generate_sonarqube_url,generated_unit_test_url,genereted_blackduck_url)
+        final_fact_list = replace_values_with_links(fact_list,generate_sonarqube_url,generated_unit_test_url)
         
         #Setting Steps Names and status icon
         json_payload["sections"].append({"facts": final_fact_list})
         
         #Setting footer of message
-        json_payload["sections"].append({"text": f'<img src="{github_user_icon}"> by {github_event_actor}'})
+        json_payload["sections"].append({"text": f'<img src="{github_user_icon}" style="width: 20px; height: 20px;"> by {github_event_actor}'})
 
 def teams_message_send(webhook_input, json_payload):
     headers = {'Content-Type': 'application/json'}
