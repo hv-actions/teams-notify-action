@@ -47,6 +47,12 @@ inputs:
   unit_test_url:
     description: 'generated Unit Test url from from honeycomb CICD pipeline'
     default: ''
+  docker_username:
+    description: 'docker username'
+    default: ${{ secrets.JFROG_JARJAR_SERVICE_USERNAME }}
+  docker_token:
+    description: 'docker token'
+    default: ${{ secrets.JFROG_JARJAR_SERVICE_TOKEN }}
     
 runs:
   using: 'docker'
@@ -67,5 +73,5 @@ runs:
     SONAR_HOST_URL: ${{ inputs.sonar_Host_Url }}
     SONAR_PROJECT_KEY: ${{ inputs.sonar_Project_Key }}
     UNIT_TEST_URL: ${{ inputs.unit_test_url }}
-    DOCKER_USERNAME: ${{ secrets.JFROG_JARJAR_SERVICE_USERNAME }}
-    DOCKER_PASSWORD: ${{ secrets.JFROG_JARJAR_SERVICE_TOKEN }}
+    DOCKER_USERNAME: ${{ inputs.docker_username }}
+    DOCKER_PASSWORD: ${{ inputs.docker_token }}
