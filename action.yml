@@ -50,9 +50,6 @@ inputs:
 runs:
   using: 'docker'
   image: docker://cicd-oci-release-orl.repo.orl.eng.hitachivantara.com/hv-actions/teams-notify-action:20231031.17-teams
-  credentials:
-    username: ${{ secrets.JFROG_JARJAR_SERVICE_USERNAME }}
-    password: ${{ secrets.JFROG_JARJAR_SERVICE_TOKEN }}
   env:
     STEPS_JSON: ${{ inputs.steps_json }}
     TEAMS_WEBHOOK_URL: ${{ inputs.teams_Webhook_Url }}
