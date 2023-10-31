@@ -7,6 +7,8 @@ RUN pip install pyyaml requests Pillow
 # Copy the current directory contents into the container
 COPY src/index.py /index.py
 
+RUN dir -s  
+
 # SET ENV VARIABLE
 ENV STEPS_JSON=$STEPS_JSON
 ENV TEAMS_WEBHOOK_URL=$TEAMS_WEBHOOK_URL
@@ -34,3 +36,4 @@ CMD ["python", "/index.py", \
     "$GITHUB_BRANCH_REF", "$GITHUB_RUN_ID", \
     "$SONAR_HOST_URL", "$SONAR_PROJECT_KEY", \
     "$UNIT_TEST_URL"]
+
