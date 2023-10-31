@@ -111,7 +111,7 @@ else:
 generated_unit_test_url = os.environ.get('UNIT_TEST_URL')
 
 # Function to Replace link in message
-def replace_values_with_links(data,sonarqube_url,unit_test_url,blackduck_url): 
+def replace_values_with_links(data,sonarqube_url,unit_test_url): 
     for item in data:
         if item['name'] == 'Unit_Test' and item['value'] != '❌ SKIP' and unit_test_url:
             item['value'] = f'<a href="{unit_test_url}">{item["value"]}</a>'
