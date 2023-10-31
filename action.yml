@@ -57,9 +57,9 @@ inputs:
 runs:
   using: 'docker'
   image: docker://one.hitachivantara.com/devops-docker-release/honeycomb-notify:20231030.15-teams
-  args:
-     - ${{ inputs.docker_username }}
-     - ${{ inputs.docker_token }}
+  credentials:
+    username: ${{ secrets.JFROG_JARJAR_SERVICE_USERNAME }}
+    password: ${{ secrets.JFROG_JARJAR_SERVICE_TOKEN }}
   env:
     STEPS_JSON: ${{ inputs.steps_json }}
     TEAMS_WEBHOOK_URL: ${{ inputs.teams_Webhook_Url }}
