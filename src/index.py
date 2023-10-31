@@ -84,7 +84,7 @@ def step_track(steps_input):
     if github_event_name != "pull_request" and github_event_name != "pull_request_target":
         if 'Citadel' not in steps_input:
             steps_input['Citadel'] = {'outputs': {}, 'outcome': 'skipped', 'conclusion': 'skipped'}
-        desired_sequence = ['Build', 'Unit_Test', 'Sonarqube', 'Citadel']
+        desired_sequence = ['Build', 'Unit_Test', 'Citadel', 'Sonarqube']
     else:
         desired_sequence = ['Build', 'Unit_Test', 'Sonarqube']
 

@@ -36,4 +36,3 @@ CMD ["python", "/index.py", \
     "$GITHUB_BRANCH_REF", "$GITHUB_RUN_ID", \
     "$SONAR_HOST_URL", "$SONAR_PROJECT_KEY", \
     "$UNIT_TEST_URL"]
-
