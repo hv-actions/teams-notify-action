@@ -7,8 +7,6 @@ RUN pip install pyyaml requests Pillow
 # Copy the current directory contents into the container
 COPY src/index.py /index.py
 
-RUN dir -s  
-
 # SET ENV VARIABLE
 ENV STEPS_JSON=$STEPS_JSON
 ENV TEAMS_WEBHOOK_URL=$TEAMS_WEBHOOK_URL
