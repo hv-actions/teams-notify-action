@@ -6,15 +6,15 @@ This action explicitly tracks some specific steps within pull request and merge 
 
 - For the pull request workflow, this action keeps track of whether the **[Build, Unit Test, and SonarQube]** steps were skipped, executed, or encountered failures. 
 
-- For the merge request workflow, this action monitors and records the status of the **[Build, Unit Test, SonarQube, and Blackduck]** steps, tracking whether they were skipped, executed successfully, or experienced failures.
+- For the merge request workflow, this action monitors and records the status of the **[Build, Unit Test, SonarQube, and Citadel]** steps, tracking whether they were skipped, executed successfully, or experienced failures.
 
-To track Builds, SonarQube analysis, Unit tests, and Black Duck scans within our team's notifications, we need to include unique identifiers when triggering GitHub Actions for each specific step. 
+To track Builds, SonarQube analysis, Unit tests, and Citadel scans within our team's notifications, we need to include unique identifiers when triggering GitHub Actions for each specific step. 
 
 Below are id values for each  step :
 1) Build step: Build
 2) Unit Test step: Unit_Test
 3) Sonarqube Scan: Sonarqube
-4) Blackduck Scan: Blackduck
+4) Citadel Scan: Citadel
 
 ### Example 
 ```
@@ -33,8 +33,8 @@ Below are id values for each  step :
 - name: Sonarqube Scan
   id: Sonarqube
 
-- name: Blackduck Scan
-  id: Blackduck
+- name: Citadel Scan
+  id: Citadel
 ```
 **Note - If we do not provide these ID values to their respective steps, all steps will be automatically marked as skipped**
 
@@ -67,9 +67,6 @@ Below are id values for each  step :
     teams_Webhook_Url: '${{ secrets.TEAMS_WEBHOOK_URL }}' 
     sonar_Host_Url: '${{env.SONAR_HOST_URL}}'              # Server URL for SonarQube, e.g.,https://sonar.orl.eng.hitachivantara.com
     sonar_Project_Key: '${{env.SONAR_PROJECT_KEY}}'        # Project key for SonarQube, e.g.,multi-module-tester
-    blackDuck_Server_Url: '${{env.BLACKDUCK_SERVER_URL}}'  # Serve URL for Blackduck, e.g.,https://orion.orl.eng.hitachivantara.com
-    blackDuck_ProjId: '${{env.BLACKDUCK_PROJ_ID}}'         # Blackduck Project ID e.g.,06641177-59f0-4310-833c-8c04e6bd84f4
-    blackDuck_VersionId: '${{env.BLACKDUCK_VERSION_ID}}'   # Blackduck Version ID e.g.,f9378655-8282-44d3-a49b-bff0ebf2a032
     unit_test_url: 'e.g.,https://test.test'                # Unit test report link, Currently it's only work with Honeycomb CI/CD pipeline
 ```
 **Note - The hyperlink will appear in the message only if the step is executed and valid inputs for the hyperlink are passed to the action**
