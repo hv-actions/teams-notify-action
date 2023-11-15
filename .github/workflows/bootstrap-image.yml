@@ -15,9 +15,9 @@ jobs:
       - name: Build and publish
         uses: hv-actions/bootstrap-image-action@1.1.0
         with:
-          ARTIFACTORY: cicd-oci-release-orl.repo.orl.eng.hitachivantara.com
-          ARTIFACTORY_USER: ${{ secrets.CICD_ARTIFACTORY_USERNAME }}
-          ARTIFACTORY_KEY: ${{ secrets.CICD_ARTIFACTORY_TOKEN }}
+          ARTIFACTORY: one.hitachivantara.com
+          ARTIFACTORY_USER: ${{ secrets.JFROG_JARJAR_SERVICE_USERNAME }}
+          ARTIFACTORY_KEY: ${{ secrets.JFROG_JARJAR_SERVICE_TOKEN }}
           DOCKERFILE_PATH: .github/bootstrap-image/Dockerfile
           IMAGE_PREFIX: teams
           TAG_SUFFIX: teams
