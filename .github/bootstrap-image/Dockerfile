@@ -4,7 +4,7 @@ FROM one.hitachivantara.com/docker/python:3.8-slim
 # Install the required Python packages using pip
 RUN pip install pyyaml requests Pillow
 
-# Copy the current directory contents into the container
+# Copy the current directory contents into the container.
 COPY src/index.py /index.py
 
 RUN dir -s  
