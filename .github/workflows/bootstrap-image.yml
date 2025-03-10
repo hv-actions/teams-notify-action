@@ -1,23 +1,109 @@
 name: Build and Push Container Image for Teams Notify
 
 on:
-  push:
-    paths: [ .github/bootstrap-image/** ]
+  #push:
+  #  paths: [ .github/bootstrap-image/** ]
+
+  workflow_dispatch:
+    inputs:
+      ARTIFACTORY:
+        description: "Name of the artifactory where docker image will get publish."
+        required: true
+        default: "one.hitachivantara.com/devops-docker-release"
+
+      IMAGE_PREFIX:
+        description: "If a prefix is needed to distinguish git tags for docker image build."
+        required: true
+        default: "teams"
+
+      IMAGE_NAME:
+        description: "Image name to be used for docker image build. If not provided, it will be taken from github repository name."
+        required: false
+
+      DOCKERFILE_PATH:
+        description: "Path where the dockerfile resides in github repository."
+        required: true
+        default: ".github/bootstrap-image/Dockerfile"
+
+      TAG_SUFFIX:
+        description: " If present, it will be added to the image tag."
+        required: false
+        default: "teams"
+
 
 jobs:
   bootstrap-image:
     name: Bootstrap Image for Teams Notify
     runs-on: [ k8s ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#
+#      - name: Build and publish
+#        uses: hv-actions/bootstrap-image-action@stable
+#        with:
+#          ARTIFACTORY: one.hitachivantara.com/devops-docker-release
+#          ARTIFACTORY_USER: ${{ secrets.JFROG_JARJAR_SERVICE_USERNAME }}
+#          ARTIFACTORY_KEY: ${{ secrets.JFROG_JARJAR_SERVICE_TOKEN }}
+#          DOCKERFILE_PATH: .github/bootstrap-image/Dockerfile
+#          IMAGE_PREFIX: teams
+#          TAG_SUFFIX: teams
 
-      - name: Build and publish
-        uses: hv-actions/bootstrap-image-action@stable
+
+    steps:
+
+      - name: Update image tag
+        run: |
+          if '${{ inputs.TAG_SUFFIX != '' }}' ; then
+            IMAGE_TAG=$(date +'%Y%m%d').${GITHUB_RUN_NUMBER}-${{inputs.TAG_SUFFIX}}
+          else
+            IMAGE_TAG=$(date +'%Y%m%d').${GITHUB_RUN_NUMBER}
+          fi
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Update image name
+        run: |
+          if '${{ inputs.IMAGE_NAME != '' }}' ; then
+            echo "IMAGE=${{ inputs.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+            echo "IMAGE_LATEST=${{ inputs.IMAGE_NAME }}:latest" >> $GITHUB_ENV
+          else
+            echo "IMAGE=${GITHUB_REPOSITORY}:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+            echo "IMAGE_LATEST=${GITHUB_REPOSITORY}:latest" >> $GITHUB_ENV
+          fi
+        shell: bash
+
+      - name: Docker login
+        id: docker-login
+        run: echo "${{ secrets.JFROG_PENTAHO_SERVICE_TOKEN }}" | docker login ${{ inputs.ARTIFACTORY }} -u ${{ vars.JFROG_PENTAHO_SERVICE_USERNAME }} --password-stdin
+        shell: bash
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build
+        id: build-image
+        run: |
+          docker build -t "${{ inputs.ARTIFACTORY }}/${{ env.IMAGE }}" -t "${{ inputs.ARTIFACTORY }}/${{ env.IMAGE_LATEST }}" -f ${{inputs.DOCKERFILE_PATH}} .
+        shell: bash
+
+      - name: Push to Artifactory
+        id: push-to-artifactory
+        run: |
+          docker push "${{ inputs.ARTIFACTORY }}/${{ env.IMAGE }}"
+          docker push "${{ inputs.ARTIFACTORY }}/${{ env.IMAGE_LATEST }}"
+        shell: bash
+
+      - name: Summary
+        run: |
+          echo "Image built:"\ >> $GITHUB_STEP_SUMMARY
+          echo "<pre>" >> $GITHUB_STEP_SUMMARY
+          docker images >> $GITHUB_STEP_SUMMARY
+          echo "</pre>"\ >> $GITHUB_STEP_SUMMARY
+          echo "Image pushed: '${{ inputs.ARTIFACTORY }}/${{ env.IMAGE }}'" >> $GITHUB_STEP_SUMMARY
+        shell: bash
+
+      - uses: rickstaa/action-create-tag@v1
         with:
-          ARTIFACTORY: one.hitachivantara.com/devops-docker-release
-          ARTIFACTORY_USER: ${{ secrets.JFROG_JARJAR_SERVICE_USERNAME }}
-          ARTIFACTORY_KEY: ${{ secrets.JFROG_JARJAR_SERVICE_TOKEN }}
-          DOCKERFILE_PATH: .github/bootstrap-image/Dockerfile
-          IMAGE_PREFIX: teams
-          TAG_SUFFIX: teams
+          tag: "${{inputs.IMAGE_PREFIX}}-${{ env.IMAGE_TAG }}"
+          message: "${{ inputs.ARTIFACTORY }}/${{ env.IMAGE }}"
