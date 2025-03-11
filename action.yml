@@ -49,7 +49,7 @@ inputs:
     default: ''   
 runs:
   using: 'docker'
-  image: docker://one.hitachivantara.com/devops-docker-release/hv-actions/teams-notify-action:20231115.24-teams
+  image: docker://one.hitachivantara.com/devops-docker-release/hv-actions/teams-notify-action:latest
   env:
     STEPS_JSON: ${{ inputs.steps_json }}
     TEAMS_WEBHOOK_URL: ${{ inputs.teams_Webhook_Url }}

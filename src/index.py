@@ -73,12 +73,22 @@ steps_input = re.sub(r'(?<=: )(\w+)(?=[,\n])', add_double_quotes, steps_input)
 
 #Tracking all steps for Push event and other than push
 def step_track(steps_input):
-    if 'Build' not in steps_input:
-        steps_input['Build'] = {'outputs': {}, 'outcome': 'skipped', 'conclusion': 'skipped'}
+
     if 'Sonarqube' not in steps_input:
         steps_input['Sonarqube'] = {'outputs': {}, 'outcome': 'skipped', 'conclusion': 'skipped'}
-    if 'Unit_Test' not in steps_input:
-        steps_input['Unit_Test'] = {'outputs': {}, 'outcome': 'skipped', 'conclusion': 'skipped'}
+
+    if 'Build_Unit_Test' in steps_input:
+        build_and_unit_tests = steps_input['Build_Unit_Test']
+        outcome = build_and_unit_tests['outcome']
+        conclusion = build_and_unit_tests['conclusion']
+
+        steps_input['Build'] = {'outputs': {}, 'outcome': outcome, 'conclusion': conclusion}
+        steps_input['Unit_Test'] = {'outputs': {}, 'outcome': outcome, 'conclusion': conclusion}
+    else:
+        if 'Build' not in steps_input:
+            steps_input['Build'] = {'outputs': {}, 'outcome': 'skipped', 'conclusion': 'skipped'}
+        if 'Unit_Test' not in steps_input:
+            steps_input['Unit_Test'] = {'outputs': {}, 'outcome': 'skipped', 'conclusion': 'skipped'}
         
     # Define desired sequence based on event type
     if github_event_name != "pull_request" and github_event_name != "pull_request_target":
@@ -92,9 +102,9 @@ def step_track(steps_input):
     desired_sequence_data = {key: steps_input[key] for key in desired_sequence if key in steps_input}
 
     #Adding remaining step at end other than desired sequence
-    for key, value in steps_input.items():
-        if key not in desired_sequence:
-            desired_sequence_data[key] = value
+    # for key, value in steps_input.items():
+    #     if key not in desired_sequence:
+    #         desired_sequence_data[key] = value
 
     return desired_sequence_data
 
@@ -170,7 +180,7 @@ else:
         json_payload["sections"].append({"facts": final_fact_list})
         
         #Setting footer of message
-        json_payload["sections"].append({"text": f'<img src="{github_user_icon}" style="width: 20px; height: 20px;"> by {github_event_actor}'})
+        json_payload["sections"].append({"activityImage": github_user_icon, "activityTitle": f"by {github_event_actor}"})
 
 def teams_message_send(webhook_input, json_payload):
     headers = {'Content-Type': 'application/json'}
